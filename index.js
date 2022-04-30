@@ -9,10 +9,12 @@ app.use(cors());
 // routes
 const usersRouter = require('./routes/Users');
 const typesRouter = require('./routes/Types');
+const featuresRouter = require('./routes/Features');
 
 // end points
 app.use('/auth', usersRouter);
 app.use('/type', typesRouter);
+app.use('/feature', featuresRouter);
 
 port = 3001;
 db.sequelize.sync().then(() => {
