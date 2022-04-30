@@ -9,8 +9,8 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       Features: {
-        type: DataTypes.BLOB,
-        allowNull: true,
+        type: DataTypes.STRING,
+        allowNull: false,
       },
       
     });
