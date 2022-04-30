@@ -1,14 +1,14 @@
 module.exports = (sequelize, DataTypes) => {
     const Type = sequelize.define('Type', {
-      Name: {
+      name: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      Price: {
+      price: {
         type: DataTypes.FLOAT,
         allowNull: false,
       },
-      Features: {
+      features: {
         type: DataTypes.STRING,
         allowNull: false,
       },
