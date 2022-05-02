@@ -19,12 +19,13 @@ router.post(
     const user = await User.findOne({ where: { email } });
 
     if (!user) {
-      res.status(400);
-      throw new Error('User does not exist');
+      res.json({error:'email is not registered'})
+      // res.status(400);
+      // throw new Error('User does not exist');
     }
 
-    await bcrypt.compare(password, user.password).then((similar) => {
-      if (similar) {
+    await bcrypt.compare(password, user.password).then((match) => {
+      if (match) {
         const accessToken = sign({ username: user.email, id: user.id }, process.env.JWT_SECRET);
         res.json({ token: accessToken, email: user.email, id: user.id });
       } else {
