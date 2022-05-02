@@ -2,24 +2,51 @@ const express = require('express');
 const router = express.Router();
 const { User } = require('../models');
 const bcrypt = require('bcrypt');
+const { sign } = require('jsonwebtoken');
+const { validateToken } = require('../middlewares/Auth');
+const asyncHandler = require('express-async-handler');
 
-router.get('/', (req, res) => {
-  res.json('you are now logged in');
+router.get('/', validateToken, async (req, res) => {
+  const users = await User.findAll();
+  res.json(users);
 });
 
-router.post('/register', async (req, res) => {
-  const { firstName, lastName, address, occupation, email, password } = req.body;
+router.post(
+  '/',
+  asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
 
-  bcrypt.hash(password, 10).then(async (hashed) => {
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      res.status(400);
+      throw new Error('User does not exist');
+    }
+
+    await bcrypt.compare(password, user.password).then((similar) => {
+      if (similar) {
+        const accessToken = sign({ username: user.email, id: user.id }, process.env.JWT_SECRET);
+        res.json({ token: accessToken, email: user.email, id: user.id });
+      } else {
+        res.json({ error: 'Wrong password' });
+      }
+    });
+  }),
+);
+
+router.post('/register', async (req, res) => {
+  const user = req.body;
+
+  bcrypt.hash(user.password, 10).then(async (hashed) => {
     await User.create({
-      firstName: firstName,
-      lastName: lastName,
-      picture: null,
-      company: null,
-      number: null,
-      address: address,
-      occupation: occupation,
-      email: email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      picture: user.picture,
+      company: user.company,
+      number: user.number,
+      address: user.address,
+      occupation: user.occupation,
+      email: user.email,
       password: hashed,
     });
   });

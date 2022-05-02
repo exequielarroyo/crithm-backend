@@ -1,9 +1,13 @@
 const express = require("express");
-const app = express();
 const db = require("./models");
 const cors = require("cors");
+const { errorHandler } = require("./middlewares/Error");
 
+require('dotenv').config();
+
+const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 
 // routes
@@ -18,7 +22,14 @@ app.use("/project", projectRouter);
 app.use("/type", typesRouter);
 app.use("/feature", featuresRouter);
 
-port = 3001;
+app.use(errorHandler);
+
+app.use((err, req, res, next) => {
+  console.error(err.stack)
+  res.status(500).send('Something broke!')
+})
+
+port = process.env.PORT;
 db.sequelize.sync().then(() => {
   app.listen(port, () => {
     console.log(`Server starts at ${port}`);
