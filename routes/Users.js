@@ -3,10 +3,10 @@ const router = express.Router();
 const { User } = require('../models');
 const bcrypt = require('bcrypt');
 const { sign } = require('jsonwebtoken');
-const { validateToken } = require('../middlewares/Auth');
+const { validateToken, validateRole } = require('../middlewares/Auth');
 const asyncHandler = require('express-async-handler');
 
-router.get('/', validateToken, async (req, res) => {
+router.get('/', validateToken, validateRole([1]), async (req, res) => {
   const users = await User.findAll();
   res.json(users);
 });
@@ -19,7 +19,7 @@ router.post(
     const user = await User.findOne({ where: { email } });
 
     if (!user) {
-      res.json({error:'email is not registered'})
+      res.json({ error: 'email is not registered' });
       // res.status(400);
       // throw new Error('User does not exist');
     }
@@ -27,7 +27,7 @@ router.post(
     await bcrypt.compare(password, user.password).then((match) => {
       if (match) {
         const accessToken = sign({ username: user.email, id: user.id }, process.env.JWT_SECRET);
-        res.json({ token: accessToken, email: user.email, id: user.id });
+        res.json({ token: accessToken, email: user.email, role: user.role });
       } else {
         res.json({ error: 'Wrong password' });
       }
@@ -48,6 +48,7 @@ router.post('/register', async (req, res) => {
       address: user.address,
       occupation: user.occupation,
       email: user.email,
+      role: user.role,
       password: hashed,
     });
   });

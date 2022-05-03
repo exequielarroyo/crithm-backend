@@ -8,7 +8,7 @@ const validateToken = (req, res, next) => {
   } else {
     try {
       const validToken = verify(accessToken, 'secret123');
-      req.user = validToken
+      req.user = validToken;
       if (validToken) {
         return next();
       }
@@ -18,4 +18,14 @@ const validateToken = (req, res, next) => {
   }
 };
 
-module.exports = { validateToken };
+const validateRole = (roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(parseInt(req.body.role))) {
+      res.json('You dont have permission.');
+    } else {
+      next();
+    }
+  };
+};
+
+module.exports = { validateToken, validateRole };
