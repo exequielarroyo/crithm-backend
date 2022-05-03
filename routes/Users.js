@@ -17,7 +17,6 @@ router.post(
     const { email, password } = req.body;
 
     const user = await User.findOne({ where: { email } });
-
     if (!user) {
       res.json({ error: 'email is not registered' });
       // res.status(400);
@@ -26,8 +25,13 @@ router.post(
 
     await bcrypt.compare(password, user.password).then((match) => {
       if (match) {
-        const accessToken = sign({ username: user.email, id: user.id }, process.env.JWT_SECRET);
-        res.json({ token: accessToken, email: user.email, role: user.role });
+        const accessToken = sign({ username: user.email, role: user.roles }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30s' });
+        const refreshToken = sign({ username: user.email, role: user.roles }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '1d' });
+
+        User.update({ ...user, refreshToken }, { where: { email: user.email } });
+
+        res.cookie('jwt', refreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
+        res.json({ role: user.role, accessToken });
       } else {
         res.json({ error: 'Wrong password' });
       }

@@ -35,11 +35,15 @@ module.exports = (sequelize, DataTypes) => {
     role: {
       type: DataTypes.INTEGER,
       allowNull: true,
-      defaultValue: 1
+      defaultValue: 1,
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    refreshToken: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
   });
 

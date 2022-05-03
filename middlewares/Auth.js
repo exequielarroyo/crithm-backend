@@ -1,20 +1,18 @@
 const { verify } = require('jsonwebtoken');
+require('dotenv').config();
 
 const validateToken = (req, res, next) => {
-  const accessToken = req.header('accessToken');
+  const authorization = req.header('authorization');
 
-  if (!accessToken) {
+  if (!authorization) {
     res.json({ error: 'user not logged in' });
   } else {
-    try {
-      const validToken = verify(accessToken, 'secret123');
-      req.user = validToken;
-      if (validToken) {
-        return next();
-      }
-    } catch (err) {
-      res.json({ error: err.message });
-    }
+    const token = authorization.split(' ')[1];
+    verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+      if (err) res.sendStatus(403).send();
+      req.user = decoded.email;
+      next();
+    });
   }
 };
 
