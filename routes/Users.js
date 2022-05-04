@@ -25,12 +25,15 @@ router.post(
 
     await bcrypt.compare(password, user.password).then((match) => {
       if (match) {
-        const accessToken = sign({ username: user.email, role: user.roles }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30s' });
-        const refreshToken = sign({ username: user.email, role: user.roles }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '1d' });
+        const accessToken = sign({ email: user.email, role: user.roles }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30s' });
+        const refreshToken = sign({ email: user.email, role: user.roles }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '1d' });
 
         User.update({ ...user, refreshToken }, { where: { email: user.email } });
 
-        res.cookie('jwt', refreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
+        // for using thunder
+        // res.cookie('jwt', refreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
+        // for react
+        res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 1000 });
         res.json({ role: user.role, accessToken });
       } else {
         res.json({ error: 'Wrong password' });

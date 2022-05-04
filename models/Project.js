@@ -1,10 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
   const Project = sequelize.define("Project", {
-    projectName: {
+    name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    projectDescription: {
+    description: {
       type: DataTypes.STRING,
       allowNull: false,
     },

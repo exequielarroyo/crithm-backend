@@ -3,14 +3,18 @@ const db = require('./models');
 const cors = require('cors');
 const { errorHandler } = require('./middlewares/Error');
 const cookieParser = require('cookie-parser');
+const corsOptions = require('./config/corsOptions');
+const credentials = require('./middlewares/Credential');
 
 require('dotenv').config();
 
 const app = express();
+app.use(credentials);
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(cors());
+// app.use(cors());
 
 // routes
 const usersRouter = require('./routes/Users');
