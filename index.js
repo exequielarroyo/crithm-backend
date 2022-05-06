@@ -16,6 +16,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 // app.use(cors());
 
+app.use('/images', express.static(__dirname + '/assets/images'));
+
 // routes
 const usersRouter = require('./routes/Users');
 const projectRouter = require('./routes/Projects');
