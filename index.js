@@ -5,8 +5,20 @@ const { errorHandler } = require('./middlewares/Error');
 const cookieParser = require('cookie-parser');
 const corsOptions = require('./config/corsOptions');
 const credentials = require('./middlewares/Credential');
+const multer = require('multer');
+const path = require('path');
 
 require('dotenv').config();
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, `${__dirname}/assets/images`);
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}${path.extname(file.originalname)}`);
+  },
+});
+const upload = multer({ storage });
 
 const app = express();
 app.use(credentials);
@@ -17,6 +29,9 @@ app.use(cookieParser());
 // app.use(cors());
 
 app.use('/images', express.static(__dirname + '/assets/images'));
+app.post('/upload', upload.single('image'), (req, res) => {
+  res.send('Image uploaded');
+});
 
 // routes
 const usersRouter = require('./routes/Users');
