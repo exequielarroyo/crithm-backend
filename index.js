@@ -7,7 +7,10 @@ const corsOptions = require('./config/corsOptions');
 const credentials = require('./middlewares/Credential');
 const multer = require('multer');
 const path = require('path');
+const session = require('express-session');
+const passport = require('passport');
 
+require('./middlewares/Auth');
 require('dotenv').config();
 
 const storage = multer.diskStorage({
@@ -21,6 +24,10 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 const app = express();
+app.use(session({ secret: 'cats' }));
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(credentials);
 app.use(cors(corsOptions));
 app.use(express.json());

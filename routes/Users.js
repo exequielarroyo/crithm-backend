@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const { sign } = require('jsonwebtoken');
 const { validateToken, validateRole } = require('../middlewares/Auth');
 const asyncHandler = require('express-async-handler');
+const passport = require('passport');
 
 router.get('/', validateToken, validateRole([1]), async (req, res) => {
   const users = await User.findAll();
@@ -62,5 +63,21 @@ router.post('/register', async (req, res) => {
 
   res.json('registered');
 });
+
+const isLoggedIn = (req, res, next) => {
+  req.user ? next() : res.sendStatus(401);
+};
+
+router.get('/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
+router.get('/google/callback', passport.authenticate('google', { successRedirect: '/auth/user', failureRedirect: '/error' }));
+
+router.get('/user', isLoggedIn, (req, res) => {
+  res.send('Logged in');
+});
+router.get('/error', (req, res) => {
+  res.send('Error logged in');
+});
+
+router.get('/google/logout');
 
 module.exports = router;
