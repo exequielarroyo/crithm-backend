@@ -8,11 +8,11 @@ router.get('/', async (req, res) => {
 
   const cookies = req.cookies;
 
-  if (!cookies.jwt || !cookies.connect.sid) res.sendStatus(204);
+  if (!cookies.jwt) res.sendStatus(204);
   else {
     console.log(cookies.jwt);
   }
-  const refreshToken = cookies.jwt || cookies.connect.sid;
+  const refreshToken = cookies.jwt;
 
   const user = await User.findOne({ where: { refreshToken } });
 
