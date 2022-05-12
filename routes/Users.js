@@ -59,31 +59,33 @@ router.post(
   }),
 );
 
-router.post("/register", asyncHandler(
-  async (req, res) => {
+router.post(
+  "/register",
+  asyncHandler(async (req, res) => {
     const user = req.body;
-  
+
     if (!user.firstName || !user.lastName || !user.address) {
       res.send({ error: "error" });
-    }
-    let newUser
-    bcrypt.hash(user.password, 10).then(async (hashed) => {
-      newUser = await User.create({
-        firstName: user.firstName,
-        lastName: user.lastName,
-        picture: user.picture,
-        company: user.company,
-        number: parseInt(user.number),
-        address: user.address,
-        occupation: user.occupation,
-        email: user.email,
-        role: user.role,
-        password: hashed,
+    } else {
+      let newUser;
+      bcrypt.hash(user.password, 10).then(async (hashed) => {
+        newUser = await User.create({
+          firstName: user.firstName,
+          lastName: user.lastName,
+          picture: user.picture,
+          company: user.company,
+          number: parseInt(user.number),
+          address: user.address,
+          occupation: user.occupation,
+          email: user.email,
+          role: user.role,
+          password: hashed,
+        });
+        res.json({ ...user });
       });
-      res.json({...user});
-    });
-  })
-)
+    }
+  }),
+);
 
 const isLoggedIn = (req, res, next) => {
   req.user ? next() : res.sendStatus(401);
