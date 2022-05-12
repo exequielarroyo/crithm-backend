@@ -1,5 +1,5 @@
 const allowedOrigins = [
-  'https://www.crithm.ml',
+  'https://www.crithm.cf',
   'http://127.0.0.1:5500',
   'http://localhost:3002',
   'http://localhost:3000'
