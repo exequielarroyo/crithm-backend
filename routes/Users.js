@@ -73,7 +73,7 @@ router.post("/register", asyncHandler(
         lastName: user.lastName,
         picture: user.picture,
         company: user.company,
-        number: user.number,
+        number: parseInt(user.number),
         address: user.address,
         occupation: user.occupation,
         email: user.email,
