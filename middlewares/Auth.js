@@ -28,6 +28,7 @@ const validateRole = (roles) => {
 };
 
 const passport = require("passport");
+const res = require("express/lib/response");
 var GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 passport.use(
@@ -42,59 +43,27 @@ passport.use(
         where: { email: profile.emails[0].value },
       });
       if (!user) {
-        user = await User.findOrCreate({
+        const [row, created] = await User.findOrCreate({
           where: {
             firstName: profile.name.givenName,
             lastName: profile.name.familyName,
-            picture: null,
-            company: null,
-            number: null,
-            address: "Street, Barangay, City, Province, Country",
-            occupation: "Student",
             email: profile.emails[0].value,
             role: 1,
-            password: "google",
-            // refreshToken: refreshToken,
           },
         });
+        user = row;
       }
-
+      
       return cb(null, user);
     },
   ),
 );
 
 passport.serializeUser(async (user, cb) => {
-  // const accessToken = sign(
-  //   { email: user.email, role: user.roles },
-  //   process.env.ACCESS_TOKEN_SECRET,
-  //   { expiresIn: "30s" },
-  // );
-  // const refreshToken = sign(
-  //   { email: user.email, role: user.roles },
-  //   process.env.REFRESH_TOKEN_SECRET,
-  //   { expiresIn: "1d" },
-  // );
-
-  // await User.update(
-  //   { ...user, refreshToken },
-  //   { where: { email: user.email } },
-  // );
-
-  // res.cookie("jwt", refreshToken, {
-  //   httpOnly: true,
-  //   sameSite: "None",
-  //   secure: true,
-  //   maxAge: 24 * 60 * 60 * 1000,
-  // });
-  // res.json({ role: user.role, accessToken });
-
   cb(null, user);
 });
 passport.deserializeUser((user, cb) => {
-  User.findOne({ where: { email: user.email } }).then((user) => {
-    cb(null, user);
-  });
+  cb(null, user);
 });
 
 module.exports = { validateToken, validateRole };

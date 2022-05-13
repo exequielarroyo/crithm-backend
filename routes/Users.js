@@ -97,37 +97,38 @@ router.get(
   passport.authenticate("google", { scope: ["email", "profile"] }),
 );
 
-router.get(
-  "/google/callback",
-  passport.authenticate("google", {
-    successRedirect: "http://localhost:3000/dashboard",
-    failureRedirect: "/auth/error",
-  }),
-);
-// router.get("/google/callback", passport.authenticate("google"), (req, res) => {
-//   const user = req.user;
-//   res.send(user)
-//   // const accessToken = sign(
-//   //   { email: user.email, role: user.roles },
-//   //   process.env.ACCESS_TOKEN_SECRET,
-//   //   { expiresIn: "30s" },
-//   // );
-//   // const refreshToken = sign(
-//   //   { email: user.email, role: user.roles },
-//   //   process.env.REFRESH_TOKEN_SECRET,
-//   //   { expiresIn: "1d" },
-//   // );
+// router.get(
+//   "/google/callback",
+//   passport.authenticate("google", {
+//     successRedirect: "http://localhost:3000/dashboard",
+//     failureRedirect: "/auth/error",
+//   }),
+// );
+router.get("/google/callback", passport.authenticate("google"), async (req, res) => {
+  const user = req.user;
+  // res.send(user)
+  const accessToken = sign(
+    { email: user.email, role: user.roles },
+    process.env.ACCESS_TOKEN_SECRET,
+    { expiresIn: "30s" },
+  );
+  const refreshToken = sign(
+    { email: user.email, role: user.roles },
+    process.env.REFRESH_TOKEN_SECRET,
+    { expiresIn: "1d" },
+  );
 
-//   // User.update({ ...user, refreshToken }, { where: { email: user.email } });
+  await User.update({ ...user, refreshToken }, { where: { email: user.email } });
 
-//   // res.cookie("jwt", refreshToken, {
-//   //   httpOnly: true,
-//   //   sameSite: "None",
-//   //   secure: true,
-//   //   maxAge: 24 * 60 * 60 * 1000,
-//   // });
-//   // res.json({ role: user.role, accessToken });
-// });
+  res.cookie("jwt", refreshToken, {
+    httpOnly: true,
+    sameSite: "None",
+    secure: true,
+    maxAge: 24 * 60 * 60 * 1000,
+  });
+  res.data = { role: user.role, accessToken };
+  res.redirect("http://localhost:3000/dashboard");
+});
 
 router.get("/user", isLoggedIn, (req, res) => {
   res.send(req.user);
