@@ -33,12 +33,13 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-// app.use(cors());
 
 app.use('/images', express.static(__dirname + '/assets/images'));
 app.post('/upload', upload.single('image'), (req, res) => {
   res.send('Image uploaded');
 });
+
+
 
 // routes
 const usersRouter = require('./routes/Users');
