@@ -38,6 +38,16 @@ router.post(
   }),
 );
 
+router.get(
+  "/:id",
+  validateToken,
+  asyncHandler(async (req, res) => {
+    const id = req.params.id;
+    const project = await Project.findOne({ where: { id } });
+    res.json(project);
+  }),
+);
+
 router.put(
   "/:id",
   validateToken,
