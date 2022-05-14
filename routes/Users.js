@@ -1,15 +1,20 @@
 const express = require("express");
 const router = express.Router();
-const { User } = require("../models");
+const { User, Project } = require("../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { validateToken, validateRole } = require("../middlewares/Auth");
 const asyncHandler = require("express-async-handler");
 const passport = require("passport");
 
-router.get("/", validateToken, validateRole([1]), async (req, res) => {
-  const users = await User.findAll();
-  res.json(users);
+router.get("/", validateToken, async (req, res) => {
+  const user = await User.findOne({ where: { email: req.user } });
+  if (user.role === 2){
+    const users = await User.findAll({ include: [Project] });
+    res.json(users);
+  } else {
+    res.sendStatus(403)
+  }
 });
 
 router.post(
@@ -104,31 +109,38 @@ router.get(
 //     failureRedirect: "/auth/error",
 //   }),
 // );
-router.get("/google/callback", passport.authenticate("google"), async (req, res) => {
-  const user = req.user;
-  // res.send(user)
-  const accessToken = sign(
-    { email: user.email, role: user.roles },
-    process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: "30s" },
-  );
-  const refreshToken = sign(
-    { email: user.email, role: user.roles },
-    process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: "1d" },
-  );
+router.get(
+  "/google/callback",
+  passport.authenticate("google"),
+  async (req, res) => {
+    const user = req.user;
+    // res.send(user)
+    const accessToken = sign(
+      { email: user.email, role: user.roles },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "30s" },
+    );
+    const refreshToken = sign(
+      { email: user.email, role: user.roles },
+      process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: "1d" },
+    );
 
-  await User.update({ ...user, refreshToken }, { where: { email: user.email } });
+    await User.update(
+      { ...user, refreshToken },
+      { where: { email: user.email } },
+    );
 
-  res.cookie("jwt", refreshToken, {
-    httpOnly: true,
-    sameSite: "None",
-    secure: true,
-    maxAge: 24 * 60 * 60 * 1000,
-  });
-  res.data = { role: user.role, accessToken };
-  res.redirect("http://localhost:3000/dashboard");
-});
+    res.cookie("jwt", refreshToken, {
+      httpOnly: true,
+      sameSite: "None",
+      secure: true,
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+    res.data = { role: user.role, accessToken };
+    res.redirect("http://localhost:3000/dashboard");
+  },
+);
 
 router.get("/user", isLoggedIn, (req, res) => {
   res.send(req.user);

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { Project, User } = require("../models");
 const asyncHandler = require("express-async-handler");
-const { validateToken } = require("../middlewares/Auth");
+const { validateToken, validateRole } = require("../middlewares/Auth");
 
 router.get(
   "/",
@@ -10,9 +10,13 @@ router.get(
   asyncHandler(async (req, res) => {
     // TODO: update /project so that not all projects is return
     const user = await User.findOne({ where: { email: req.user } });
-
-    const projects = await Project.findAll({ where: { UserId: user.id } });
-    res.json(projects);
+    if (user.role === 2) {
+      const projects = await Project.findAll();
+      res.json(projects);
+    } else {
+      const projects = await Project.findAll({ where: { UserId: user.id } });
+      res.json(projects);
+    }
   }),
 );
 
@@ -47,7 +51,6 @@ router.put(
     } catch (error) {
       res.sendStatus(401);
     }
-
   }),
 );
 
