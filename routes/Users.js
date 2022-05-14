@@ -101,6 +101,11 @@ router.get(
   // (req,res)=>res.send('logging in with google')
   passport.authenticate("google", { scope: ["email", "profile"] }),
 );
+router.get(
+  "/facebook",
+  // (req,res)=>res.send('logging in with google')
+  passport.authenticate("facebook"),
+);
 
 // router.get(
 //   "/google/callback",
@@ -113,6 +118,40 @@ router.get(
   "/google/callback",
   passport.authenticate("google"),
   async (req, res) => {
+    const user = req.user;
+    // res.send(user)
+    const accessToken = sign(
+      { email: user.email, role: user.roles },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "30s" },
+    );
+    const refreshToken = sign(
+      { email: user.email, role: user.roles },
+      process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: "1d" },
+    );
+
+    await User.update(
+      { ...user, refreshToken },
+      { where: { email: user.email } },
+    );
+
+    res.cookie("jwt", refreshToken, {
+      httpOnly: true,
+      sameSite: "None",
+      secure: true,
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+    res.data = { role: user.role, accessToken };
+    res.redirect("http://localhost:3000/dashboard");
+  },
+);
+router.get(
+  "/facebook/callback",
+  passport.authenticate("facebook"),
+  async (req, res) => {
+    // res.send(req.user)
+
     const user = req.user;
     // res.send(user)
     const accessToken = sign(

@@ -30,6 +30,7 @@ const validateRole = (roles) => {
 const passport = require("passport");
 const res = require("express/lib/response");
 var GoogleStrategy = require("passport-google-oauth20").Strategy;
+const FacebookStrategy = require('passport-facebook').Strategy;
 
 passport.use(
   new GoogleStrategy(
@@ -58,8 +59,37 @@ passport.use(
     },
   ),
 );
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: process.env.FACEBOOK_CLIENT_ID,
+      clientSecret: process.env.FACEBOOK_SECRET,
+      callbackURL: "http://localhost:3002/auth/facebook/callback",
+      profileFields: ['first_name','last_name', 'email']
+    },
+    async function (req, accessToken, refreshToken, profile, cb) {
+      
+      let user = await User.findOne({
+        where: { email: profile.emails[0].value },
+      });
+      if (!user) {
+        const [row, created] = await User.findOrCreate({
+          where: {
+            firstName: profile.name.givenName,
+            lastName: profile.name.familyName,
+            email: profile.emails[0].value,
+            role: 1,
+          },
+        });
+        user = row;
+      }
 
-passport.serializeUser(async (user, cb) => {
+      return cb(null, user);
+    },
+  ),
+);
+
+passport.serializeUser((user, cb) => {
   cb(null, user);
 });
 passport.deserializeUser((user, cb) => {
