@@ -51,6 +51,7 @@ module.exports = (sequelize, DataTypes) => {
     User.hasMany(models.Project, {
       onDelete: "cascade",
     });
+    models.Project.belongsTo(User);
   };
 
   return User;

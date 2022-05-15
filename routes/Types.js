@@ -3,8 +3,9 @@ const router = express.Router();
 const { Type } = require('../models');
 //const bcrypt = require('bcrypt');
 
-router.get('/', (req, res) => {
-  res.json('Choose your type of system');
+router.get('/', async(req, res) => {
+  const types = await Type.findAll({ attributes: { exclude: ["features"] } });
+  res.json(types);
 });
 
 router.post("/", async(req, res) => {
