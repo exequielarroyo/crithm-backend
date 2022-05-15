@@ -148,7 +148,7 @@ router.get(
       maxAge: 24 * 60 * 60 * 1000,
     });
     res.data = { role: user.role, accessToken };
-    res.redirect("http://localhost:3000/dashboard");
+    res.redirect(`${process.env.APP_URL}/dashboard`);
   },
 );
 router.get(
@@ -182,7 +182,7 @@ router.get(
       maxAge: 24 * 60 * 60 * 1000,
     });
     res.data = { role: user.role, accessToken };
-    res.redirect("http://localhost:3000/dashboard");
+    res.redirect(`${process.env.APP_URL}/dashboard`);
   },
 );
 router.get(
@@ -216,7 +216,7 @@ router.get(
       maxAge: 24 * 60 * 60 * 1000,
     });
     res.data = { role: user.role, accessToken };
-    res.redirect("http://localhost:3000/dashboard");
+    res.redirect(`${process.env.APP_URL}/dashboard`);
   },
 );
 
