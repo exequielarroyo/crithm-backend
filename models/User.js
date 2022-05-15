@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const User = sequelize.define('User', {
+  const User = sequelize.define("User", {
     firstName: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     address: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     company: {
       type: DataTypes.STRING,
@@ -22,10 +22,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     occupation: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     number: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.BIGINT,
       allowNull: true,
     },
     email: {
@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     refreshToken: {
       type: DataTypes.STRING,
@@ -49,7 +49,7 @@ module.exports = (sequelize, DataTypes) => {
 
   User.associate = (models) => {
     User.hasMany(models.Project, {
-      onDelete: 'cascade',
+      onDelete: "cascade",
     });
   };
 
