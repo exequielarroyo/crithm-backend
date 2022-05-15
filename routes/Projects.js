@@ -33,8 +33,8 @@ router.post(
       throw new Error("body is null");
     }
     project.UserId = user.id;
-    await Project.create(project);
-    res.json(project);
+    const newProject = await Project.create(project);
+    res.json(newProject);
   }),
 );
 
