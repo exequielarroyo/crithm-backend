@@ -38,7 +38,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_SECRET,
-      callbackURL: "http://localhost:3002/auth/google/callback",
+      callbackURL: `${process.env.CALLBACK_URL}/auth/google/callback`,
     },
     async function (req, accessToken, refreshToken, profile, cb) {
       let user = await User.findOne({
@@ -65,7 +65,7 @@ passport.use(
     {
       clientID: process.env.FACEBOOK_CLIENT_ID,
       clientSecret: process.env.FACEBOOK_SECRET,
-      callbackURL: "http://localhost:3002/auth/facebook/callback",
+      callbackURL: `${process.env.CALLBACK_URL}/auth/facebook/callback`,
       profileFields: ['id','first_name','last_name', 'email']
     },
     async function (req, accessToken, refreshToken, profile, cb) {
@@ -94,7 +94,7 @@ passport.use(
     {
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_SECRET,
-      callbackURL: "http://localhost:3002/auth/github/callback",
+      callbackURL: `${process.env.CALLBACK_URL}/auth/github/callback`,
     },
     async function (req, accessToken, refreshToken, profile, cb) {
       
