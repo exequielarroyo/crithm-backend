@@ -45,6 +45,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    isPaid: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   });
 
   User.associate = (models) => {
