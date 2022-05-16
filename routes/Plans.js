@@ -14,4 +14,10 @@ router.post('/', expressAsyncHandler(async(req,res)=>{
   res.json('created')
 }))
 
+router.put('/', expressAsyncHandler(async(req,res)=>{
+  const plan = req.body;
+  const updatedPlan = await Plan.update(plan, { where: { name: plan.name } });
+  res.json(updatedPlan);
+}))
+
 module.exports = router;

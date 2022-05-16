@@ -4,6 +4,18 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    projects: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    features: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    price: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+    },
   });
 
   Plan.associate = (models) => {
