@@ -8,6 +8,12 @@ router.get("/",  expressAsyncHandler(async(req,res)=>{
   res.json(plans)
 }));
 
+router.get("/:id",  expressAsyncHandler(async(req,res)=>{
+  const { id } = req.params;
+  const plans = await Plan.findOne({ where: { id } });
+  res.json(plans)
+}));
+
 router.post('/', expressAsyncHandler(async(req,res)=>{
   const plan = req.body;
   await Plan.create(plan)
