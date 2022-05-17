@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { User, Project } = require("../models");
+const { User, Project, Plan } = require("../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { validateToken, validateRole } = require("../middlewares/Auth");
@@ -8,11 +8,14 @@ const asyncHandler = require("express-async-handler");
 const passport = require("passport");
 
 router.get("/", validateToken, async (req, res) => {
-  const user = await User.findOne({ where: { email: req.user } });
+  const user = await User.findOne({ where: { email: req.user }, attributes: { exclude: ['password', 'picture', 'refresh'] }});
   if (user.role === 2){
     const users = await User.findAll({ include: [Project] });
     res.json(users);
-  } else {
+  } else if (user.role === 1){
+    res.json(user)
+  }
+  else {
     res.sendStatus(403)
   }
 });
