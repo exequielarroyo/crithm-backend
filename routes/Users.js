@@ -21,9 +21,9 @@ router.get("/", validateToken, async (req, res) => {
 });
 
 router.put('/',validateToken, asyncHandler(async(req,res)=>{
-  const { isPaid } = req.body;
-  const user = await User.findOne({ where: { email: req.user }, attributes: { exclude: ['password', 'picture', 'refresh'] }});
-  await User.update({...user, isPaid }, { where: { id: user.id } });
+  const user = req.body;
+  // const user = await User.findOne({ where: { email: req.user }, attributes: { exclude: ['password', 'picture', 'refresh'] }});
+  await User.update({...user }, { where: { email: req.user } });
   res.json(user);
 }))
 
