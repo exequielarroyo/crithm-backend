@@ -26,6 +26,11 @@ router.put('/',validateToken, asyncHandler(async(req,res)=>{
   res.json(user);
 }))
 
+router.put('/update', validateToken, asyncHandler(async(req,res)=>{
+    const updatedUser = await User.update({ ...req.body }, { where: { email: req.user } });
+    res.json(updatedUser);
+}))
+
 router.post(
   "/",
   asyncHandler(async (req, res) => {
