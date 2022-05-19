@@ -17,14 +17,16 @@ router.post("/forgot", async (req, res, next) => {
   const forgotPasswordToken = sign({ email: user.email, role: user.roles }, process.env.FORGOT_PASSWORD_TOKEN_SECRET, { expiresIn: "15m" });
   const link = `${process.env.CALLBACK_URL}/password/reset/${user.id}/${forgotPasswordToken}`;
 
-  // res.json("Password reset link has been sent");
-  // TODO send link to email
   var mailOptions = {
     from: "crithm.cf@gmail.com",
     to: user.email,
     subject: "Crithm | FORGOT YOUR PASSWORD",
-    text: `This link will expire in 15 minutes.
-${link}`,
+    // TODO put html here
+    html: `
+    <h1>Click the provided link to change your password.</h1>
+    <a href='${link}'>Change password</a>
+    <p>This link will expire in 15 minutes.</p>
+    `,
   };
   transporter.sendMail(mailOptions, function(error, info){
     if (error) {
