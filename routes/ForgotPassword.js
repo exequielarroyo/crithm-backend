@@ -22,8 +22,9 @@ router.post("/forgot", async (req, res, next) => {
   var mailOptions = {
     from: "crithm.cf@gmail.com",
     to: user.email,
-    subject: "Sending Email using Node.js",
-    text: link,
+    subject: "Crithm | FORGOT YOUR PASSWORD",
+    text: `This link will expire in 15 minutes.
+${link}`,
   };
   transporter.sendMail(mailOptions, function(error, info){
     if (error) {
