@@ -3,7 +3,7 @@ const { sign, verify } = require("jsonwebtoken");
 const { User } = require("../models");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
-const transporter = nodemailer.createTransport({ service: "gmail", auth: { user: "crithm.cf@gmail.com", pass: "abcd_1234" } });
+const transporter = nodemailer.createTransport({ service: "gmail", auth: { user: "crithm.cf@gmail.com", pass: "pfhjisflxstwdoqn" } });
 
 router.post("/forgot", async (req, res, next) => {
   const { email } = req.body;
