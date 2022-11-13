@@ -45,12 +45,17 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    isPaid: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+    },
   });
 
   User.associate = (models) => {
     User.hasMany(models.Project, {
       onDelete: "cascade",
     });
+    models.Project.belongsTo(User);
   };
 
   return User;

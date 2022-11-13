@@ -48,6 +48,8 @@ const typesRouter = require('./routes/Types');
 const featuresRouter = require('./routes/Features');
 const tokenRouter = require('./routes/Token');
 const logoutRouter = require('./routes/Logout');
+const planRouter = require('./routes/Plans');
+const passwordRouter = require('./routes/ForgotPassword');
 
 // end points
 app.use('/auth', usersRouter);
@@ -56,6 +58,8 @@ app.use('/type', typesRouter);
 app.use('/feature', featuresRouter);
 app.use('/refresh', tokenRouter);
 app.use('/logout', logoutRouter);
+app.use('/plan', planRouter);
+app.use('/password', passwordRouter);
 
 app.use(errorHandler);
 
